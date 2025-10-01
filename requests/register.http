@@ -1,4 +1,4 @@
-### Rejestracja nowego użytkownika
+### User registration
 POST http://localhost:8080/api/auth/register
 Content-Type: application/json
 
@@ -8,9 +8,7 @@ Content-Type: application/json
   "password": "Test1234"
 }
 
-###
-
-### Logowanie użytkownika
+### User login
 POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
@@ -19,6 +17,6 @@ Content-Type: application/json
   "password": "Test1234"
 }
 
-### Sprawdzenie /me po zalogowaniu
+### Check current user
 GET http://localhost:8080/api/auth/me
 

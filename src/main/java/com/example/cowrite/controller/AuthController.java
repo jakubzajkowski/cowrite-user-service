@@ -36,7 +36,6 @@ public class AuthController {
         String username = (String) SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();
-        // Tworzymy DTO tylko z username, możesz też pobrać więcej danych z DB jeśli chcesz
         UserDto userDto = new UserDto(null, username, null);
         return ResponseEntity.ok(userDto);
     }

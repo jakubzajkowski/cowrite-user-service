@@ -17,7 +17,6 @@ public class RegisterRequest {
     @Size(min = 3, max = 50)
     private String username;
 
-    // Gettery i settery
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
     public String getPassword() { return password; }

@@ -11,7 +11,6 @@ public class UserDto {
         this.email = email;
     }
 
-    // Gettery i settery
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getUsername() { return username; }
