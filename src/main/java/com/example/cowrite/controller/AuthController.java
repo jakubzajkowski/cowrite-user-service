@@ -3,6 +3,7 @@ package com.example.cowrite.controller;
 import com.example.cowrite.dto.LoginRequest;
 import com.example.cowrite.dto.RegisterRequest;
 import com.example.cowrite.dto.UserDto;
+import com.example.cowrite.entity.User;
 import com.example.cowrite.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class AuthController {
         String username = (String) SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();
-        UserDto userDto = new UserDto(null, username, null);
+        UserDto userDto = new UserDto(Long.parseLong("123214213312123124"), username, null);
         return ResponseEntity.ok(userDto);
     }
 }
