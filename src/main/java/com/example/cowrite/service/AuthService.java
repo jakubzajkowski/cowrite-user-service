@@ -45,7 +45,7 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid email or password");
         }
 
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user.getEmail());
 
         Cookie cookie = new Cookie(COOKIE_NAME, token);
         cookie.setHttpOnly(true);
@@ -53,6 +53,11 @@ public class AuthService {
         cookie.setMaxAge(jwtUtil.EXPIRATION_TIME / 1000);
         response.addCookie(cookie);
 
+        return new UserDto(user.getId(), user.getUsername(), user.getEmail());
+    }
+    public UserDto getCurrentUser(String usernameOrEmail) {
+        User user = userRepository.findByEmail(usernameOrEmail)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         return new UserDto(user.getId(), user.getUsername(), user.getEmail());
     }
 }

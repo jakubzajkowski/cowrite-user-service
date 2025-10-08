@@ -34,10 +34,11 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<UserDto> me() {
-        String username = (String) SecurityContextHolder.getContext()
+        String email = (String) SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();
-        UserDto userDto = new UserDto(Long.parseLong("123214213312123124"), username, null);
+
+        UserDto userDto = authService.getCurrentUser(email);
         return ResponseEntity.ok(userDto);
     }
 }
