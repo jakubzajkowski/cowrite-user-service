@@ -23,6 +23,7 @@ jwt.expiration=3600000
 spring.datasource.url=jdbc:postgresql://localhost:5432/cowrite_user_service_db
 spring.datasource.username=db_user
 spring.datasource.password=db_password
+spring.data.redis.password=redis_password
 ```
 - Make sure to update these values if you use a different database or want a stronger JWT secret.
 

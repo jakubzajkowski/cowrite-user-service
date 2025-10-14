@@ -8,6 +8,8 @@ import com.example.cowrite.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,7 @@ public class AuthService {
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
-
+    @CacheEvict(value = "users", key = "#request.getEmail()")
     public UserDto register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email already in use");
@@ -55,6 +57,7 @@ public class AuthService {
 
         return new UserDto(user.getId(), user.getUsername(), user.getEmail());
     }
+    @Cacheable(value = "users", key = "#usernameOrEmail")
     public UserDto getCurrentUser(String usernameOrEmail) {
         User user = userRepository.findByEmail(usernameOrEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
