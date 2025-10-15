@@ -33,9 +33,7 @@ public class RateLimiterFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private Bucket createNewBucket() {
-        return Bucket.builder()
-                .addLimit(limit -> limit.capacity(MAX_REQUESTS).refillGreedy(REFILL, Duration.ofSeconds(DURATION_SECONDS)))
-                .build();
+        return Bucket.builder().addLimit(limit -> limit.capacity(MAX_REQUESTS).refillGreedy(REFILL, Duration.ofSeconds(DURATION_SECONDS))).build();
     }
 
     @Override
@@ -49,11 +47,7 @@ public class RateLimiterFilter extends OncePerRequestFilter {
         } else {
             response.setStatus(429);
             response.setContentType("application/json");
-            ErrorDTO errorDTO = new ErrorDTO(
-                    LocalDateTime.now(ZoneOffset.UTC),
-                    429,
-                    "Too many requests"
-            );
+            ErrorDTO errorDTO = new ErrorDTO(LocalDateTime.now(ZoneOffset.UTC), 429, "Too many requests");
 
             String json = objectMapper.writeValueAsString(errorDTO);
             response.getWriter().write(json);

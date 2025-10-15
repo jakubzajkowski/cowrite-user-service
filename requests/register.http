@@ -1,5 +1,5 @@
 ### User registration
-POST http://localhost:8080/api/auth/register
+POST http://localhost:8080/register
 Content-Type: application/json
 
 {
@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ### User login
-POST http://localhost:8080/api/auth/login
+POST http://localhost:8080/login
 Content-Type: application/json
 
 {
@@ -18,5 +18,5 @@ Content-Type: application/json
 }
 
 ### Check current user
-GET http://localhost:8080/api/auth/me
+GET http://localhost:8080/me
 

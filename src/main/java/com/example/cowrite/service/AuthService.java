@@ -26,6 +26,7 @@ public class AuthService {
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
+
     @CacheEvict(value = "users", key = "#request.getEmail()")
     public UserDto register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -57,6 +58,7 @@ public class AuthService {
 
         return new UserDto(user.getId(), user.getUsername(), user.getEmail());
     }
+
     @Cacheable(value = "users", key = "#usernameOrEmail")
     public UserDto getCurrentUser(String usernameOrEmail) {
         User user = userRepository.findByEmail(usernameOrEmail)
