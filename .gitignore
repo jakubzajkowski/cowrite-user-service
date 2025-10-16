@@ -3,6 +3,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+.env
+.enc.local
 ### STS ###
 .apt_generated
 .classpath
@@ -31,3 +33,4 @@ build/
 ### VS Code ###
 .vscode/
 secrets.properties
+application-secrets.yml
