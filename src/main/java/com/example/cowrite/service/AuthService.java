@@ -1,12 +1,16 @@
 package com.example.cowrite.service;
 
 import com.example.cowrite.dto.RegisterRequest;
+import com.example.cowrite.dto.TokenDTO;
 import com.example.cowrite.dto.UserDto;
 import com.example.cowrite.entity.User;
 import com.example.cowrite.repository.UserRepository;
 import com.example.cowrite.util.JwtUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,6 +24,9 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     @Value("${jwt.cookie.name}")
     private String COOKIE_NAME;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     public AuthService(UserRepository userRepository, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
@@ -47,16 +54,22 @@ public class AuthService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("Invalid email or password");
         }
+        TokenDTO tokenDto = new TokenDTO(user.getId(),  user.getUsername(), user.getEmail());
 
-        String token = jwtUtil.generateToken(user.getEmail());
+        try {
+            String userJson = objectMapper.writeValueAsString(tokenDto);
+            String token = jwtUtil.generateToken(userJson);
 
-        Cookie cookie = new Cookie(COOKIE_NAME, token);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(jwtUtil.EXPIRATION_TIME / 1000);
-        response.addCookie(cookie);
+            Cookie cookie = new Cookie(COOKIE_NAME, token);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(jwtUtil.EXPIRATION_TIME / 1000);
+            response.addCookie(cookie);
 
-        return new UserDto(user.getId(), user.getUsername(), user.getEmail());
+            return new UserDto(user.getId(), user.getUsername(), user.getEmail());
+        }catch (Exception e){
+            throw new RuntimeException("Error processing login", e);
+        }
     }
 
     @Cacheable(value = "users", key = "#usernameOrEmail")
