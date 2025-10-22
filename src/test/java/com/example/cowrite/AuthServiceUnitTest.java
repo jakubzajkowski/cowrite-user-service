@@ -6,13 +6,14 @@ import com.example.cowrite.entity.User;
 import com.example.cowrite.repository.UserRepository;
 import com.example.cowrite.service.AuthService;
 import com.example.cowrite.util.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
@@ -21,37 +22,32 @@ import static org.mockito.Mockito.*;
 
 class AuthServiceUnitTest {
 
-    @Mock
     private UserRepository userRepository;
-
-    @Mock
     private JwtUtil jwtUtil;
-
-    @Mock
     private HttpServletResponse response;
-
-    @InjectMocks
+    private ObjectMapper objectMapper;
     private AuthService authService;
-
     private BCryptPasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        userRepository = mock(UserRepository.class);
+        jwtUtil = mock(JwtUtil.class);
+        response = mock(HttpServletResponse.class);
+        objectMapper = new ObjectMapper();
         passwordEncoder = new BCryptPasswordEncoder();
 
-        // ustawiamy COOKIE_NAME, bo @Value nie działa w unit testach
+        authService = new AuthService(userRepository, jwtUtil, objectMapper);
+
         ReflectionTestUtils.setField(authService, "COOKIE_NAME", "jwt-token");
     }
 
-    // ---------------- register ----------------
     @Test
     void register_shouldSaveUser_whenEmailNotExists() {
         RegisterRequest request = new RegisterRequest("test@example.com", "password123", "TestUser");
 
         when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
 
-        // symulujemy autogenerowane ID przy zapisie
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
             User u = invocation.getArgument(0);
             u.setId(1L);
@@ -79,7 +75,7 @@ class AuthServiceUnitTest {
 
     // ---------------- login ----------------
     @Test
-    void login_shouldReturnUserDtoAndSetCookie_whenPasswordMatches() {
+    void login_shouldReturnUserDtoAndSetCookie_whenPasswordMatches() throws Exception {
         String rawPassword = "password123";
         String hashedPassword = passwordEncoder.encode(rawPassword);
 
@@ -90,7 +86,7 @@ class AuthServiceUnitTest {
         user.setPassword(hashedPassword);
 
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
-        when(jwtUtil.generateToken("test@example.com")).thenReturn("mocked-jwt-token");
+        when(jwtUtil.generateToken(anyString())).thenReturn("mocked-jwt-token");
 
         UserDto result = authService.login("test@example.com", rawPassword, response);
 
@@ -98,7 +94,6 @@ class AuthServiceUnitTest {
         assertEquals("test@example.com", result.getEmail());
         assertEquals(1L, result.getId());
 
-        // sprawdzamy, że cookie został dodany
         verify(response, times(1)).addCookie(any(Cookie.class));
     }
 

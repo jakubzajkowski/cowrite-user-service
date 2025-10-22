@@ -22,15 +22,14 @@ public class AuthService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final ObjectMapper objectMapper;
     @Value("${jwt.cookie.name}")
     private String COOKIE_NAME;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
-    public AuthService(UserRepository userRepository, JwtUtil jwtUtil) {
+    public AuthService(UserRepository userRepository, JwtUtil jwtUtil, ObjectMapper objectMapper) {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
+        this.objectMapper = objectMapper;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
