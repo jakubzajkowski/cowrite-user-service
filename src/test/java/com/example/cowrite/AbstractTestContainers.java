@@ -1,19 +1,30 @@
 package com.example.cowrite;
 
 import com.redis.testcontainers.RedisContainer;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
+@SpringBootTest
+@ActiveProfiles("test")
 public class AbstractTestContainers {
 
-    @Container
-    private static PostgreSQLContainer postgresqlContainer = new PostgreSQLContainer("postgres:16");
+    private static final PostgreSQLContainer<?> postgresqlContainer;
+    private static final RedisContainer redisContainer;
 
-    @Container
-    private static RedisContainer redisContainer = new RedisContainer("redis:7");
+    static {
+        postgresqlContainer = new PostgreSQLContainer<>("postgres:16")
+                .withReuse(true);
+        postgresqlContainer.start();
+
+        redisContainer = new RedisContainer("redis:7")
+                .withReuse(true);
+        redisContainer.start();
+    }
 
     @DynamicPropertySource
     static void dynamicProperties(org.springframework.test.context.DynamicPropertyRegistry registry) {

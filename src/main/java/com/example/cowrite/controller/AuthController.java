@@ -3,7 +3,6 @@ package com.example.cowrite.controller;
 import com.example.cowrite.dto.LoginRequest;
 import com.example.cowrite.dto.RegisterRequest;
 import com.example.cowrite.dto.UserDto;
-import com.example.cowrite.entity.User;
 import com.example.cowrite.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
