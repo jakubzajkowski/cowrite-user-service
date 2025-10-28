@@ -22,6 +22,8 @@ public class RegisterRequest {
         this.password = password;
         this.username = username;
     }
+    public RegisterRequest(){
+    }
 
     public String getEmail() {
         return email;
